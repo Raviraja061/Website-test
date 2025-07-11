@@ -413,13 +413,6 @@
         if (document.getElementById('property-page').classList.contains('active') && currentUserRole === 'customer') {
             fetchAndDisplayPlantCostsForCustomer();
         }
-       window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-  size: 'invisible',
-  callback: function(response) {
-    // reCAPTCHA solved, you can send the OTP
-  }
-});
-window.recaptchaVerifier.render();
 
 
     
@@ -668,22 +661,26 @@ let otpVerified = false;
 
 function sendOTP() {
   let phone = document.getElementById("phone").value.trim();
-if (!phone.startsWith("+91")) {
-  phone = "+91" + phone;
-}
+  if (!phone.startsWith("+91")) {
+    phone = "+91" + phone;
+  }
 
-  const appVerifier = window.recaptchaVerifier; // ✅ use the existing one
+  console.log("Sending OTP to:", phone);
+
+  const appVerifier = window.recaptchaVerifier;
 
   firebase.auth().signInWithPhoneNumber(phone, appVerifier)
     .then((result) => {
       confirmationResult = result;
       document.getElementById("otp-status").textContent = "OTP sent!";
+      console.log("OTP sent!");
     })
     .catch((error) => {
-      console.error(error);
-      alert("Failed to send OTP. Check number format or try later.");
+      console.error("OTP Error:", error);
+      alert("Failed to send OTP. Check phone number format or try again.");
     });
 }
+
 
 
 function verifyOTP() {
@@ -721,31 +718,7 @@ function verifyOTP() {
 </script>
 <script>
   // Ensure these functions are available globally
-  function goToPage(pageId, progress) {
-    document.querySelectorAll('.page').forEach(page => {
-      page.classList.remove('active');
-    });
-    document.getElementById(pageId).classList.add('active');
-    document.getElementById('progress').style.width = progress + '%';
-    window.scrollTo(0, 0);
-
-    // Optional: Refresh data for customer on property page
-    if (pageId === 'property-page' && localStorage.getItem('userRole') === 'customer') {
-      fetchAndDisplayPlantCostsForCustomer?.();
-    }
-  }
-
-  function selectLanguage(lang) {
-    localStorage.setItem('userLanguage', lang);
-    currentLanguage = lang;
-    updateUIForLanguage?.(lang);
-  }
-
-  // Make sure these are accessible globally
-  window.goToPage = goToPage;
-  window.selectLanguage = selectLanguage;
-</script>
-<script>
+  
   // Global page navigation and language functions
   function goToPage(pageId, progress) {
     document.querySelectorAll('.page').forEach(page => {
@@ -780,6 +753,20 @@ function verifyOTP() {
     document.getElementById('register-form').style.display = 'none';
     document.getElementById('login-form').style.display = 'block';
   }
+</script>
+<script>
+  window.onload = function () {
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+      size: 'invisible',
+      callback: function (response) {
+        console.log("reCAPTCHA solved");
+      }
+    });
+
+    window.recaptchaVerifier.render().then(function (widgetId) {
+      console.log("reCAPTCHA rendered:", widgetId);
+    });
+  };
 </script>
 
 
