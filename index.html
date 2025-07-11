@@ -413,7 +413,14 @@
         if (document.getElementById('property-page').classList.contains('active') && currentUserRole === 'customer') {
             fetchAndDisplayPlantCostsForCustomer();
         }
-    });
+       window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+  size: 'invisible',
+  callback: function(response) {
+    // reCAPTCHA solved, you can send the OTP
+  }
+});
+window.recaptchaVerifier.render();
+
 
     // Page navigation
     function goToPage(pageId, progress) {
@@ -678,25 +685,14 @@
 let confirmationResult = null;
 let otpVerified = false;
 
-function setUpRecaptcha() {
-  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-    size: 'invisible',
-    callback: function(response) {
-      sendOTP();
-    }
-  });
-}
 
 function sendOTP() {
-  const phone = document.getElementById("phone").value;
+  let phone = document.getElementById("phone").value.trim();
+if (!phone.startsWith("+91")) {
+  phone = "+91" + phone;
+}
 
-  if (!phone.startsWith("+91")) {
-    alert("Please include +91 before the phone number.");
-    return;
-  }
-
-  setUpRecaptcha();
-  const appVerifier = window.recaptchaVerifier;
+  const appVerifier = window.recaptchaVerifier; // ✅ use the existing one
 
   firebase.auth().signInWithPhoneNumber(phone, appVerifier)
     .then((result) => {
@@ -705,9 +701,10 @@ function sendOTP() {
     })
     .catch((error) => {
       console.error(error);
-      alert("Failed to send OTP. Check number format.");
+      alert("Failed to send OTP. Check number format or try later.");
     });
 }
+
 
 function verifyOTP() {
   const otp = document.getElementById("otp").value;
