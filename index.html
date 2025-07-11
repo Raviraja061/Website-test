@@ -659,6 +659,28 @@ let confirmationResult = null;
 let otpVerified = false;
 
 
+
+
+</script>
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDYI9D0cpUXyeejsWIKsOLyPIW7NV7LoI0",
+    authDomain: "cygnii-solar-45.firebaseapp.com",
+    projectId: "cygnii-solar-45",
+    storageBucket: "cygnii-solar-45.firebasestorage.app",
+    messagingSenderId: "209900063736",
+    appId: "1:209900063736:web:c5a4171aae9eed7853a40d",
+    measurementId: "G-XF30NYDHZZ"
+  };
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+</script>
+<script>
 window.sendOTP = function () {
   let phone = document.getElementById("phone").value.trim();
   if (!phone.startsWith("+91")) {
@@ -694,26 +716,6 @@ window.verifyOTP = function () {
       alert("Invalid OTP. Try again.");
     });
 };
-
-
-</script>
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics-compat.js"></script>
-
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDYI9D0cpUXyeejsWIKsOLyPIW7NV7LoI0",
-    authDomain: "cygnii-solar-45.firebaseapp.com",
-    projectId: "cygnii-solar-45",
-    storageBucket: "cygnii-solar-45.firebasestorage.app",
-    messagingSenderId: "209900063736",
-    appId: "1:209900063736:web:c5a4171aae9eed7853a40d",
-    measurementId: "G-XF30NYDHZZ"
-  };
-  firebase.initializeApp(firebaseConfig);
-  firebase.analytics();
 </script>
 <script>
   // Ensure these functions are available globally
