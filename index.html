@@ -422,27 +422,7 @@
 window.recaptchaVerifier.render();
 
 
-    // Page navigation
-    function goToPage(pageId, progress) {
-        // Hide all pages
-        document.querySelectorAll('.page').forEach(page => {
-            page.classList.remove('active');
-        });
-
-        // Show the selected page
-        document.getElementById(pageId).classList.add('active');
-
-        // Update progress bar
-        document.getElementById('progress').style.width = progress + '%';
-
-        // Scroll to top
-        window.scrollTo(0, 0);
-
-        // Specific action after navigating to property page
-        if (pageId === 'property-page' && currentUserRole === 'customer') {
-            fetchAndDisplayPlantCostsForCustomer(); // Refresh costs for customer view
-        }
-    }
+    
 
     // Language selection
     function selectLanguage(lang) {
@@ -738,6 +718,68 @@ function verifyOTP() {
   };
   firebase.initializeApp(firebaseConfig);
   firebase.analytics();
+</script>
+<script>
+  // Ensure these functions are available globally
+  function goToPage(pageId, progress) {
+    document.querySelectorAll('.page').forEach(page => {
+      page.classList.remove('active');
+    });
+    document.getElementById(pageId).classList.add('active');
+    document.getElementById('progress').style.width = progress + '%';
+    window.scrollTo(0, 0);
+
+    // Optional: Refresh data for customer on property page
+    if (pageId === 'property-page' && localStorage.getItem('userRole') === 'customer') {
+      fetchAndDisplayPlantCostsForCustomer?.();
+    }
+  }
+
+  function selectLanguage(lang) {
+    localStorage.setItem('userLanguage', lang);
+    currentLanguage = lang;
+    updateUIForLanguage?.(lang);
+  }
+
+  // Make sure these are accessible globally
+  window.goToPage = goToPage;
+  window.selectLanguage = selectLanguage;
+</script>
+<script>
+  // Global page navigation and language functions
+  function goToPage(pageId, progress) {
+    document.querySelectorAll('.page').forEach(page => {
+      page.classList.remove('active');
+    });
+    document.getElementById(pageId).classList.add('active');
+    document.getElementById('progress').style.width = progress + '%';
+    window.scrollTo(0, 0);
+
+    if (pageId === 'property-page' && localStorage.getItem('userRole') === 'customer') {
+      if (typeof fetchAndDisplayPlantCostsForCustomer === 'function') {
+        fetchAndDisplayPlantCostsForCustomer();
+      }
+    }
+  }
+
+  function selectLanguage(lang) {
+    localStorage.setItem('userLanguage', lang);
+    currentLanguage = lang;
+    if (typeof updateUIForLanguage === 'function') {
+      updateUIForLanguage(lang);
+    }
+  }
+
+  window.goToPage = goToPage;
+  window.selectLanguage = selectLanguage;
+  window.showRegister = function () {
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('register-form').style.display = 'block';
+  }
+  window.showLogin = function () {
+    document.getElementById('register-form').style.display = 'none';
+    document.getElementById('login-form').style.display = 'block';
+  }
 </script>
 
 
