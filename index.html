@@ -6,9 +6,11 @@
     <title>Property Selection System - CYGNII</title>
     <link rel="stylesheet" href="style.css"> </head>
     <!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+<!-- Firebase Compat SDKs (Correct for your use case) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
 
 <script>
   const firebaseConfig = {
@@ -407,25 +409,7 @@
         document.getElementById('custom-cost-label').textContent = langData.customCostLabel;
         // No update buttons on customer side
     }
-
-    // Initialize language and check role on load
-    document.addEventListener('DOMContentLoaded', () => {
-        updateUIForLanguage(currentLanguage);
-
-        // If already logged in and role is admin, redirect to admin page
-        if (currentUserRole === 'admin') {
-            window.location.href = 'admin.html';
-            return; // Stop further execution for this page
-        }
-
-        // If on property page (e.g., direct access after login/refresh) and a customer, load costs
-        if (document.getElementById('property-page').classList.contains('active') && currentUserRole === 'customer') {
-            fetchAndDisplayPlantCostsForCustomer();
-        }
-    });
-
-    // Page navigation
-    function goToPage(pageId, progress) {
+function goToPage(pageId, progress) {
         // Hide all pages
         document.querySelectorAll('.page').forEach(page => {
             page.classList.remove('active');
@@ -452,6 +436,25 @@
         currentLanguage = lang;
         updateUIForLanguage(lang);
     }
+
+    // Initialize language and check role on load
+    document.addEventListener('DOMContentLoaded', () => {
+        updateUIForLanguage(currentLanguage);
+
+        // If already logged in and role is admin, redirect to admin page
+        if (currentUserRole === 'admin') {
+            window.location.href = 'admin.html';
+            return; // Stop further execution for this page
+        }
+
+        // If on property page (e.g., direct access after login/refresh) and a customer, load costs
+        if (document.getElementById('property-page').classList.contains('active') && currentUserRole === 'customer') {
+            fetchAndDisplayPlantCostsForCustomer();
+        }
+    });
+
+    // Page navigation
+    
 
     // Show register form
     function showRegister() {
@@ -505,14 +508,7 @@
 
                 // --- END MOCK LOGIN LOGIC ---
 
-            } catch (error) {
-                console.error('Login error:', error);
-                alert(translations[currentLanguage].loginError);
-            }
-        } else {
-            alert(translations[currentLanguage].enterEmailPass);
-        }
-    }
+         
 
     // Register function
     async function register() {
