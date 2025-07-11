@@ -659,7 +659,7 @@ let confirmationResult = null;
 let otpVerified = false;
 
 
-function sendOTP() {
+window.sendOTP = function () {
   let phone = document.getElementById("phone").value.trim();
   if (!phone.startsWith("+91")) {
     phone = "+91" + phone;
@@ -679,11 +679,9 @@ function sendOTP() {
       console.error("OTP Error:", error);
       alert("Failed to send OTP. Check phone number format or try again.");
     });
-}
+};
 
-
-
-function verifyOTP() {
+window.verifyOTP = function () {
   const otp = document.getElementById("otp").value;
 
   confirmationResult.confirm(otp)
@@ -695,7 +693,8 @@ function verifyOTP() {
       console.error(error);
       alert("Invalid OTP. Try again.");
     });
-}
+};
+
 
 </script>
 <!-- Firebase SDKs -->
@@ -755,7 +754,7 @@ function verifyOTP() {
   }
 </script>
 <script>
-  window.onload = function () {
+  document.addEventListener('DOMContentLoaded', function () {
     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
       size: 'invisible',
       callback: function (response) {
@@ -766,8 +765,9 @@ function verifyOTP() {
     window.recaptchaVerifier.render().then(function (widgetId) {
       console.log("reCAPTCHA rendered:", widgetId);
     });
-  };
+  });
 </script>
+
 
 
 </body>
