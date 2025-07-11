@@ -5,6 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Property Selection System - CYGNII</title>
     <link rel="stylesheet" href="style.css"> </head>
+    <!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDYI9D0cpUXyeejsWIKsOLyPIW7NV7LoI0",
+    authDomain: "cygnii-solar-45.firebaseapp.com",
+    projectId: "cygnii-solar-45",
+    storageBucket: "cygnii-solar-45.firebasestorage.app",
+    messagingSenderId: "209900063736",
+    appId: "1:209900063736:web:c5a4171aae9eed7853a40d",
+    measurementId: "G-XF30NYDHZZ"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+</script>
+
 <body>
 <div class="container">
     <div class="header">
@@ -445,29 +467,42 @@
 
     // Login function
     async function login() {
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
 
-        if (email && password) {
-            try {
-                // --- MOCK LOGIN LOGIC (REPLACE WITH REAL API CALLS) ---
-                // This data would come from your backend database
-                const mockUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+  if (email && password) {
+    try {
+      // Firebase login
+      const userCredential = await auth.signInWithEmailAndPassword(email, password);
+      const user = userCredential.user;
 
-                const user = mockUsers.find(u => u.email === email && u.password === password);
+      // Get user role from Firestore
+      const doc = await db.collection("users").doc(user.uid).get();
+      const userData = doc.data();
 
-                if (user) {
-                    localStorage.setItem('userRole', user.role); // Store role
-                    currentUserRole = user.role; // Update current role in JS
-                    alert(translations[currentLanguage].registrationSuccess); // Re-using translation for 'login successful'
-                    if (user.role === 'admin') {
-                        window.location.href = 'admin.html'; // Redirect to admin portal
-                    } else {
-                        goToPage('property-page', 100); // Redirect to property selection for customer
-                    }
-                } else {
-                    alert(translations[currentLanguage].invalidEmailPass);
-                }
+      if (!userData) {
+        alert("User data not found in Firestore");
+        return;
+      }
+
+      localStorage.setItem('userRole', userData.role);
+      currentUserRole = userData.role;
+
+      if (userData.role === 'admin') {
+        window.location.href = 'admin.html';
+      } else {
+        goToPage('property-page', 100);
+      }
+
+    } catch (error) {
+      console.error('Login error:', error);
+      alert(error.message || translations[currentLanguage].loginError);
+    }
+  } else {
+    alert(translations[currentLanguage].enterEmailPass);
+  }
+}
+
                 // --- END MOCK LOGIN LOGIC ---
 
             } catch (error) {
@@ -481,52 +516,42 @@
 
     // Register function
     async function register() {
-        const name = document.getElementById('name').value;
-        const phone = document.getElementById('phone').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirm-password').value;
+  const name = document.getElementById('name').value;
+  const phone = document.getElementById('phone').value;
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirm-password').value;
 
-        if (password !== confirmPassword) {
-            alert(translations[currentLanguage].passwordsMismatch);
-            return;
-        }
+  if (password !== confirmPassword) {
+    alert(translations[currentLanguage].passwordsMismatch);
+    return;
+  }
 
-        if (name && phone && email && password) {
-            try {
-                // --- MOCK REGISTER LOGIC (REPLACE WITH REAL API CALLS) ---
-                let mockUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
-                const userId = mockUsers.length > 0 ? Math.max(...mockUsers.map(u => u.id)) + 1 : 1;
+  if (name && phone && email && password) {
+    try {
+      // Firebase registration
+      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+      const user = userCredential.user;
 
-                // Check if email already exists
-                if (mockUsers.some(u => u.email === email)) {
-                    alert("This email is already registered. Please login or use a different email.");
-                    return;
-                }
+      // Store extra details in Firestore
+      await db.collection("users").doc(user.uid).set({
+        name,
+        phone,
+        email,
+        role: "customer"
+      });
 
-                const newUser = {
-                    id: userId,
-                    name: name,
-                    phone: phone,
-                    email: email,
-                    password: password, // In a real app, hash this!
-                    role: "customer" // Default new users to 'customer'
-                };
-                mockUsers.push(newUser);
-                localStorage.setItem('registeredUsers', JSON.stringify(mockUsers));
-                // --- END MOCK REGISTER LOGIC ---
+      alert(translations[currentLanguage].registrationSuccess);
+      showLogin();
 
-                alert(translations[currentLanguage].registrationSuccess);
-                showLogin(); // Go to login form after successful registration
-
-            } catch (error) {
-                console.error('Registration error:', error);
-                alert(translations[currentLanguage].registrationError);
-            }
-        } else {
-            alert(translations[currentLanguage].fillAllFields);
-        }
+    } catch (error) {
+      console.error('Registration error:', error);
+      alert(error.message || translations[currentLanguage].registrationError);
     }
+  } else {
+    alert(translations[currentLanguage].fillAllFields);
+  }
+}
 
     // Property selection functionality
     document.addEventListener('DOMContentLoaded', () => {
