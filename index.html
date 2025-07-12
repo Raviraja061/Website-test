@@ -124,7 +124,7 @@
   <div class="option-btn">Solar ▾</div>
   <div class="sub-options-menu">
     <div class="sub-option-btn" onclick="goToPage('solar-page', 100)">Solar Rooftop</div>
-    <div class="sub-option-btn" onclick="alert('Coming Soon')">Solar Fencing</div>
+    <div class="sub-option-btn" onclick="goToPage('solar-fencing', 100)">Solar Fencing</div>
   </div>
 </div>
 
@@ -161,8 +161,23 @@
   <p>Email: <a href="mailto:cygniisolar@gmail.com">cygniisolar@gmail.com</a> | Phone: 8328001860</p>
   <p>© 2023 CYGNII Property Selection System | All Rights Reserved</p>
 </div>
-       
 
+<div id="solar-fencing" class="page">
+  <div class="container">
+    <h2 class="section-title">Solar Fencing</h2>
+
+    <div class="form-group">
+      <label for="roofPerimeter">Enter your roof perimeter (in meters):</label>
+      <input type="number" id="roofPerimeter" placeholder="e.g., 120" min="0" />
+    </div>
+
+    <button class="btn" onclick="handleFencingInput()">Submit</button>
+    <div id="fencingMessage" class="message" style="display:none;"></div>
+
+    <button class="back-btn" onclick="goToPage('home', 100)">← Back to Home</button>
+  </div>
+</div>
+       
 <script>
     // Current language
     let currentLanguage = localStorage.getItem('userLanguage') || 'en';
@@ -352,6 +367,19 @@
 
     const nextLangBtn = document.querySelector('#language-page .next-btn');
     if (nextLangBtn) nextLangBtn.textContent = langData.continueBtn;
+}
+
+function handleFencingInput() {
+  const value = document.getElementById("roofPerimeter").value;
+  const msg = document.getElementById("fencingMessage");
+
+  if (value && value > 0) {
+    msg.textContent = `You entered a perimeter of ${value} meters.`;
+    msg.style.display = "block";
+  } else {
+    msg.textContent = "Please enter a valid positive number.";
+    msg.style.display = "block";
+  }
 }
 
 function goToPage(pageId, progress) {
@@ -557,4 +585,3 @@ function showUserDataInHomePage() {
 
 </body>
 </html>
-
