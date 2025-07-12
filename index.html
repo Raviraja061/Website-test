@@ -106,108 +106,62 @@
         </div>
     </div>
 
-    <div id="property-page" class="page">
-        <h2 class="section-title" id="property-title">Select Property Type</h2>
-        <div class="property-options">
-            <div class="option-group">
-                <div class="main-options">
-                    <div class="option-btn" data-option="house" id="house-btn">House</div>
-                    <div class="option-btn" data-option="commercial" id="commercial-btn">Commercial</div>
-                    <div class="option-btn" data-option="service" id="service-btn">Service</div>
-                </div>
-            </div>
-
-            <div id="subOptions" class="sub-options">
-                <h3 id="sub-options-title">Select House Type:</h3>
-                <div class="sub-options-container">
-                    <div class="option-btn sub-btn" data-suboption="pm-surya-gahr" id="pm-btn">PM Surya Gahr</div>
-                    <div class="option-btn sub-btn" data-suboption="non-dcr" id="non-dcr-btn">Non DCR</div>
-                </div>
-            </div>
-
-            <div id="message" class="message"></div>
-
-            <div id="pm-details" class="pm-details">
-                <div class="pm-section">
-                    <h3 id="documents-title">Documents Required</h3>
-                    <p id="documents-note">All documents should belong to the same person whose name is on the current bill</p>
-                    <ul class="doc-list">
-                        <li id="doc1">Aadhar Card</li>
-                        <li id="doc2">PAN Card</li>
-                        <li id="doc3">Bank Pass Book</li>
-                        <li id="doc4">4 Months Current Bill</li>
-                        <li id="doc5">Aadhar Linked Mobile Number</li>
-                    </ul>
-                </div>
-
-                <div class="pm-section">
-                    <h3 id="subsidy-title">Subsidy</h3>
-                    <table class="pm-table">
-                        <thead>
-                        <tr>
-                            <th id="plant-capacity-header">Plant Capacity</th>
-                            <th id="subsidy-amount-header">Subsidy Amount</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>1 kW</td>
-                            <td>₹30,000</td>
-                        </tr>
-                        <tr>
-                            <td>2 kW</td>
-                            <td>₹60,000</td>
-                        </tr>
-                        <tr>
-                            <td>3-10 kW</td>
-                            <td>₹78,000</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="pm-section">
-                    <h3 id="plant-cost-title">Plant Cost</h3>
-                    <table class="pm-table">
-                        <thead>
-                        <tr>
-                            <th id="plant-capacity-header2">Plant Capacity</th>
-                            <th id="cost-header">Cost</th>
-                        </tr>
-                        </thead>
-                        <tbody id="customer-plant-cost-tbody">
-                        </tbody>
-                    </table>
-
-                    <div class="cost-controls">
-                        <div class="cost-input">
-                            <label for="custom-kw" id="custom-kw-label">Custom Plant Size (4-9 kW):</label>
-                            <input type="number" id="custom-kw" min="4" max="9" value="4" readonly>
-                        </div>
-                        <div class="cost-input">
-                            <label for="custom-cost" id="custom-cost-label">Custom Cost:</label>
-                            <input type="text" id="custom-cost" value="₹2,90,000" readonly>
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 20px;">
-                        <label for="more-details" id="details-label">More Details:</label>
-                        <textarea id="more-details" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" readonly>Additional details about the plant installation can be added here.</textarea>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="nav-controls">
-            <button class="prev-btn" onclick="goToPage('auth-page', 33.33)">Back to Login</button>
-            <button class="next-btn" onclick="logoutCustomer()">Logout</button>
-        </div>
+<div id="home-page" class="page">
+  <div class="top-bar">
+    <button class="user-btn" onclick="toggleUserDetails()">👤</button>
+    <div id="user-details" class="user-details">
+      <p><strong>Name:</strong> <span id="user-name"></span></p>
+      <p><strong>Email:</strong> <span id="user-email"></span></p>
+      <p><strong>Phone:</strong> <span id="user-phone"></span></p>
+      <button class="logout-btn" onclick="logoutCustomer()">Logout</button>
     </div>
+  </div>
 
-    <div class="footer">
-        <p>© 2023 CYGNII Property Selection System | All Rights Reserved</p>
-    </div>
+
+  <h2 class="section-title">Welcome to CYGNII</h2>
+  <div class="main-options home-options">
+  <div class="option-with-sub">
+  <div class="option-btn">Solar ▾</div>
+  <div class="sub-options-menu">
+    <div class="sub-option-btn" onclick="goToPage('solar-page', 100)">Solar Rooftop</div>
+    <div class="sub-option-btn" onclick="alert('Coming Soon')">Solar Fencing</div>
+  </div>
 </div>
+
+  <div class="option-btn">Supply</div>
+  <div class="option-btn">Service</div>
+</div>
+
+</div>
+<div id="solar-page" class="page">
+  <h2 class="section-title">Solar Page</h2>
+  <div class="main-options home-options">
+
+    <!-- Home with Dropdown -->
+    <div class="option-with-sub" onmouseover="showSubOptions(this)" onmouseout="hideSubOptions(this)">
+      <div class="option-btn">Home</div>
+      <div class="sub-options-menu">
+        <div class="sub-option-btn" onclick="alert('PM Surya Ghar selected')">PM SURYA GHAR</div>
+        <div class="sub-option-btn" onclick="alert('NON-DCR selected')">NON-DCR</div>
+      </div>
+    </div>
+
+    <!-- Other Options -->
+    <div class="option-btn" onclick="alert('Commercial Selected')">Commercial</div>
+    <div class="option-btn" onclick="alert('Engineering Selected')">Engineering</div>
+
+  </div>
+<div class="nav-controls">
+  <button class="back-btn" onclick="goToPage('home-page', 100)">← Back to Home</button>
+</div>
+
+</div>
+
+   <div class="footer">
+  <p>Email: <a href="mailto:cygniisolar@gmail.com">cygniisolar@gmail.com</a> | Phone: 8328001860</p>
+  <p>© 2023 CYGNII Property Selection System | All Rights Reserved</p>
+</div>
+       
 
 <script>
     // Current language
@@ -360,55 +314,46 @@
 
     // Update UI based on selected language
     function updateUIForLanguage(lang) {
-        const langData = translations[lang] || translations.en;
+    const langData = translations[lang] || translations.en;
 
-        // Update UI elements
-        document.getElementById('main-title').textContent = langData.title;
-        document.getElementById('main-subtitle').textContent = langData.subtitle;
-        document.getElementById('language-title').textContent = langData.languageTitle;
-        document.getElementById('login-title').textContent = langData.loginTitle;
-        document.getElementById('register-title').textContent = langData.registerTitle;
-        document.getElementById('property-title').textContent = langData.propertyTitle;
-        document.getElementById('email-label').textContent = langData.emailLabel;
-        document.getElementById('password-label').textContent = langData.passwordLabel;
-        document.getElementById('name-label').textContent = langData.nameLabel;
-        document.getElementById('phone-label').textContent = langData.phoneLabel;
-        document.getElementById('reg-email-label').textContent = langData.emailLabel; // For register form email
-        document.getElementById('reg-password-label').textContent = langData.passwordLabel; // For register form password
-        document.getElementById('confirm-label').textContent = langData.confirmLabel;
-        document.getElementById('no-account').innerHTML = `${langData.noAccount} <a onclick="showRegister()">${langData.registerLink}</a>`;
-        document.getElementById('have-account').innerHTML = `${langData.haveAccount} <a onclick="showLogin()">${langData.loginLink}</a>`;
-        document.getElementById('login-btn').textContent = langData.loginBtn;
-        document.getElementById('register-btn').textContent = langData.registerBtn;
-        document.getElementById('house-btn').textContent = langData.house;
-        document.getElementById('commercial-btn').textContent = langData.commercial;
-        document.getElementById('service-btn').textContent = langData.service;
-        document.getElementById('sub-options-title').textContent = langData.subTitle;
-        document.getElementById('pm-btn').textContent = langData.pmSuryaGahr;
-        document.getElementById('non-dcr-btn').textContent = langData.nonDcr;
-        document.getElementById('admin-link-guest').textContent = langData.adminLinkGuest; // For guest admin link
-        document.querySelector('.nav-controls .prev-btn').textContent = langData.backLogin;
-        document.querySelector('#language-page .next-btn').textContent = langData.continueBtn;
-        document.querySelector('#property-page .next-btn').textContent = langData.logoutBtn; // Logout button
+    // Only update elements that actually exist in the DOM
+    const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    };
 
-        // Update PM Surya Gahr details
-        document.getElementById('documents-title').textContent = langData.documentsTitle;
-        document.getElementById('documents-note').textContent = langData.documentsNote;
-        document.getElementById('doc1').textContent = langData.doc1;
-        document.getElementById('doc2').textContent = langData.doc2;
-        document.getElementById('doc3').textContent = langData.doc3;
-        document.getElementById('doc4').textContent = langData.doc4;
-        document.getElementById('doc5').textContent = langData.doc5;
-        document.getElementById('subsidy-title').textContent = langData.subsidyTitle;
-        document.getElementById('plant-capacity-header').textContent = langData.plantCapacityHeader;
-        document.getElementById('subsidy-amount-header').textContent = langData.subsidyAmountHeader;
-        document.getElementById('plant-cost-title').textContent = langData.plantCostTitle;
-        document.getElementById('plant-capacity-header2').textContent = langData.plantCapacityHeader;
-        document.getElementById('cost-header').textContent = langData.costHeader;
-        document.getElementById('custom-kw-label').textContent = langData.customKwLabel;
-        document.getElementById('custom-cost-label').textContent = langData.customCostLabel;
-        // No update buttons on customer side
-    }
+    const setHTML = (id, html) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = html;
+    };
+
+    setText('main-title', langData.title);
+    setText('main-subtitle', langData.subtitle);
+    setText('language-title', langData.languageTitle);
+    setText('login-title', langData.loginTitle);
+    setText('register-title', langData.registerTitle);
+    setText('email-label', langData.emailLabel);
+    setText('password-label', langData.passwordLabel);
+    setText('name-label', langData.nameLabel);
+    setText('phone-label', langData.phoneLabel);
+    setText('reg-email-label', langData.emailLabel);
+    setText('reg-password-label', langData.passwordLabel);
+    setText('confirm-label', langData.confirmLabel);
+
+    setHTML('no-account', `${langData.noAccount} <a onclick="showRegister()">${langData.registerLink}</a>`);
+    setHTML('have-account', `${langData.haveAccount} <a onclick="showLogin()">${langData.loginLink}</a>`);
+
+    setText('login-btn', langData.loginBtn);
+    setText('register-btn', langData.registerBtn);
+    setText('admin-link-guest', langData.adminLinkGuest);
+
+    const backBtn = document.querySelector('.nav-controls .prev-btn');
+    if (backBtn) backBtn.textContent = langData.backLogin;
+
+    const nextLangBtn = document.querySelector('#language-page .next-btn');
+    if (nextLangBtn) nextLangBtn.textContent = langData.continueBtn;
+}
+
 function goToPage(pageId, progress) {
         // Hide all pages
         document.querySelectorAll('.page').forEach(page => {
@@ -494,7 +439,9 @@ function goToPage(pageId, progress) {
       if (userData.role === 'admin') {
         window.location.href = 'admin.html';
       } else {
-        goToPage('property-page', 100);
+        goToPage('home-page', 100);
+showUserDataInHomePage();
+
       }
 
     } catch (error) {
@@ -549,115 +496,8 @@ function goToPage(pageId, progress) {
   }
 }
 
-    // Property selection functionality
-    document.addEventListener('DOMContentLoaded', () => {
-        const mainOptions = document.querySelectorAll('.option-btn[data-option]');
-        const subOptionsContainer = document.getElementById('subOptions');
-        const messageContainer = document.getElementById('message');
-        const pmDetails = document.getElementById('pm-details');
 
-        // Handle main option selection
-        mainOptions.forEach(option => {
-            option.addEventListener('click', () => {
-                // Remove selection from all buttons
-                mainOptions.forEach(btn => btn.classList.remove('selected'));
-
-                // Select clicked button
-                option.classList.add('selected');
-
-                // Show sub-options only for House
-                if (option.dataset.option === 'house') {
-                    subOptionsContainer.style.display = 'block';
-                    messageContainer.style.display = 'none';
-                    pmDetails.style.display = 'none'; // Hide details until sub-option chosen
-                } else {
-                    subOptionsContainer.style.display = 'none';
-                    pmDetails.style.display = 'none';
-                    messageContainer.style.display = 'block';
-                    messageContainer.textContent = currentLanguage === 'te' ?
-                        `మీరు ఎంచుకున్నారు: ${option.textContent}` :
-                        `You selected: ${option.textContent}`;
-                }
-            });
-        });
-
-        // Handle sub-option selection
-        document.querySelectorAll('.sub-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('selected'));
-                btn.classList.add('selected');
-                messageContainer.style.display = 'block';
-
-                if (btn.dataset.suboption === 'pm-surya-gahr') {
-                    pmDetails.style.display = 'block';
-                    messageContainer.textContent = currentLanguage === 'te' ?
-                        `మీరు ఎంచుకున్నారు: హౌస్ → ${btn.textContent}` :
-                        `You selected: House → ${btn.textContent}`;
-                    if (currentUserRole === 'customer') {
-                        fetchAndDisplayPlantCostsForCustomer(); // Fetch costs when PM Surya Gahr is selected
-                    }
-                } else {
-                    pmDetails.style.display = 'none';
-                    messageContainer.textContent = currentLanguage === 'te' ?
-                        `మీరు ఎంచుకున్నారు: హౌస్ → ${btn.textContent}` :
-                        `You selected: House → ${btn.textContent}`;
-                }
-            });
-        });
-    });
-
-    // Function to fetch and display plant costs for customers
-    async function fetchAndDisplayPlantCostsForCustomer() {
-        // This function should only run if the user is a customer
-        if (currentUserRole !== 'customer') return;
-
-        try {
-            // Fetch from localStorage (simulating API call from admin page's changes)
-            const rates = JSON.parse(localStorage.getItem('plantCosts')) || [];
-            const sortedRates = rates.sort((a, b) => a.capacity - b.capacity);
-
-            const tbody = document.getElementById('customer-plant-cost-tbody');
-            tbody.innerHTML = ''; // Clear existing rows
-
-            sortedRates.forEach(rate => {
-                const row = tbody.insertRow();
-                // Using Intl.NumberFormat for correct currency formatting based on locale
-                const formattedCost = new Intl.NumberFormat(currentLanguage === 'te' ? 'en-IN' : 'en-US', { style: 'currency', currency: 'INR' }).format(rate.cost);
-                row.innerHTML = `
-                    <td>${rate.capacity} kW</td>
-                    <td>${formattedCost}</td>
-                `;
-            });
-
-            // Update custom cost fields (read-only for customer)
-            const customKwInput = document.getElementById('custom-kw');
-            const customCostInput = document.getElementById('custom-cost');
-            const selectedKw = parseInt(customKwInput.value);
-
-            const customRate = sortedRates.find(r => r.capacity === selectedKw);
-            if (customRate) {
-                customCostInput.value = new Intl.NumberFormat(currentLanguage === 'te' ? 'en-IN' : 'en-US', { style: 'currency', currency: 'INR' }).format(customRate.cost);
-            } else {
-                customCostInput.value = currentLanguage === 'te' ? "లభ్యం లేదు" : "Not Available";
-            }
-
-            // Add an event listener to update custom cost if custom-kw input changes
-            customKwInput.onchange = () => {
-                const newSelectedKw = parseInt(customKwInput.value);
-                const newCustomRate = sortedRates.find(r => r.capacity === newSelectedKw);
-                if (newCustomRate) {
-                    customCostInput.value = new Intl.NumberFormat(currentLanguage === 'te' ? 'en-IN' : 'en-US', { style: 'currency', currency: 'INR' }).format(newCustomRate.cost);
-                } else {
-                    customCostInput.value = currentLanguage === 'te' ? "లభ్యం లేదు" : "Not Available";
-                }
-            };
-
-
-        } catch (error) {
-            console.error('Error fetching plant costs:', error);
-            alert(translations[currentLanguage].errorFetchingCosts);
-        }
-    }
+  
 
     // Admin access function (for guest access testing - not main login path)
     function showAdminPrompt() {
@@ -683,8 +523,38 @@ function goToPage(pageId, progress) {
         alert(currentLanguage === 'te' ? "మీరు విజయవంతంగా లాగౌట్ అయ్యారు." : "You have been logged out successfully.");
         window.location.href = 'index.html'; // Redirect to login page
     }
+function toggleUserDetails() {
+    const panel = document.getElementById("user-details");
+    panel.style.display = panel.style.display === "block" ? "none" : "block";
+}
+function showSubOptions(element) {
+  const menu = element.querySelector('.sub-options-menu');
+  if (menu) menu.style.display = 'block';
+}
+
+function hideSubOptions(element) {
+  const menu = element.querySelector('.sub-options-menu');
+  if (menu) menu.style.display = 'none';
+}
+
+function showUserDataInHomePage() {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+
+    db.collection("users").doc(uid).get().then(doc => {
+        if (doc.exists) {
+            const data = doc.data();
+            document.getElementById("user-name").textContent = data.name || "";
+            document.getElementById("user-email").textContent = data.email || "";
+            document.getElementById("user-phone").textContent = data.phone || "";
+        }
+    }).catch(error => {
+        console.error("Error fetching user details for home page:", error);
+    });
+}
 </script>
 
 
 </body>
 </html>
+
