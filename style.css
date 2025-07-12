@@ -5,6 +5,85 @@
     padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+.top-bar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+  position: relative;
+}
+
+.user-btn {
+  background: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.user-details {
+  display: none;
+  position: absolute;
+  top: 40px;
+  right: 10px;
+  background: #f9f9f9;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 220px;
+  z-index: 10;
+}
+
+.user-details p {
+  margin: 5px 0;
+}
+
+.option-with-sub {
+  position: relative;
+}
+
+.sub-options-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  z-index: 10;
+  padding: 5px 0;
+}
+
+
+
+.sub-option-btn {
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  color: #2c3e50;
+  background-color: #fdfdfd;
+  transition: background 0.25s ease, color 0.25s ease;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.sub-option-btn:last-child {
+  border-bottom: none;
+}
+
+.sub-option-btn:hover {
+  background-color: #eaf4ff;
+  color: #007acc;
+}
+
+
+.home-options {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
 
 body {
     background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
@@ -17,13 +96,14 @@ body {
 
 .container, .admin-container {
     width: 100%;
-    max-width: 800px; /* For main container */
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 20px;
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-    position: relative;
+    max-width: 900px;
+    margin: auto;
+    padding: 25px 30px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
 }
+
 
 /* Header Styles (for both customer and admin portals) */
 .header, .admin-header {
@@ -36,15 +116,82 @@ body {
     align-items: center;
     justify-content: center;
 }
+.admin-section table {
+  width: 100%;
+  overflow-x: auto;
+  display: block;
+}
 
-.header img, .admin-header img { /* Style for the logo */
-    max-width: 200px; /* Adjust as needed */
+.header img, .admin-header img {
+    max-width: 120px;
     height: auto;
-    margin-bottom: 15px; /* Space between logo and title */
+    margin-bottom: 10px;
+}
+.navbar {
+  display: flex;
+  background: #004a99;
+  color: white;
+  padding: 12px 20px;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.menu {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-item {
+  position: relative;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background 0.3s;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #ffffff;
+  color: #333;
+  min-width: 180px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: none;
+  flex-direction: column;
+  z-index: 10;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.nav-item:hover .dropdown {
+  display: flex;
+}
+
+.dropdown a {
+  padding: 12px;
+  text-decoration: none;
+  color: #004a99;
+  transition: background 0.3s;
+}
+
+.dropdown a:hover {
+  background-color: #f1f1f1;
+}
+
+.page-title {
+  padding: 20px;
+  font-size: 1.8rem;
+  color: #004a99;
 }
 
 .header h1, .admin-header h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
     margin-bottom: 10px;
 }
 
@@ -119,18 +266,18 @@ body {
 
 /* Buttons */
 .btn {
-    padding: 15px 30px;
+    padding: 12px 24px;
     background: #3498db;
     color: white;
     border: none;
-    border-radius: 10px;
-    font-size: 1.1rem;
+    border-radius: 8px;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    min-width: 150px;
-    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
 }
+
 
 .btn:hover {
     transform: translateY(-3px);
@@ -228,19 +375,25 @@ body {
 }
 
 .option-btn {
-    padding: 18px 20px;
-    background: #f8f9fa;
-    border: 2px solid #e9ecef;
+    padding: 20px;
+    background: #ffffff;
+    border: 2px solid #3498db;
     border-radius: 12px;
-    cursor: pointer;
     font-size: 1rem;
     font-weight: 600;
-    color: #495057;
+    color: #3498db;
     transition: all 0.3s ease;
-    flex: 1;
-    min-width: 130px;
+    min-width: 160px;
     text-align: center;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);
 }
+
+.option-btn:hover {
+    background: #e6f2fb;
+    color: #3498db;
+    box-shadow: 0 6px 18px rgba(52, 152, 219, 0.3);
+}
+
 
 .option-btn:hover {
     background: #e9ecef;
@@ -316,9 +469,39 @@ body {
     background: #2c3e50;
     color: #ecf0f1;
     text-align: center;
-    padding: 15px;
+    padding: 15px 20px;
     font-size: 0.9rem;
+    width: 100%;
+    box-sizing: border-box;
 }
+.logout-btn {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: #c0392b;
+}
+
+
+.footer a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
 
 /* Navigation Buttons */
 .next-btn {
@@ -614,4 +797,23 @@ body {
         padding: 6px 10px;
         font-size: 0.8rem;
     }
+}
+.option-with-sub:hover .sub-options-menu {
+  display: block;
+}
+.back-btn {
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #007BFF; /* Nice blue */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  display: block;
+  transition: background-color 0.3s;
+}
+
+.back-btn:hover {
+  background-color: #0056b3;
 }
