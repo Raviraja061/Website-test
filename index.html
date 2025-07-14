@@ -27,6 +27,36 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
+firebase.auth().onAuthStateChanged(async (user) => {
+    if (user) {
+        // Get user role from Firestore
+        const doc = await db.collection("users").doc(user.uid).get();
+        const userData = doc.data();
+        localStorage.setItem('userRole', userData.role);
+        currentUserRole = userData.role;
+
+        if (window.location.pathname.includes("admin.html")) {
+            // Already on admin page
+            return;
+        }
+
+        if (userData.role === "admin") {
+            window.location.href = "admin.html";
+        } else {
+            goToPage("home-page", 100);
+            showUserDataInHomePage();
+        }
+    } else {
+        // No user is logged in, redirect to login if not already there
+        const loginPage = document.getElementById('auth-page');
+        if (loginPage) {
+            goToPage('auth-page', 33.33);
+        } else {
+            window.location.href = "index.html";
+        }
+    }
+});
+
 </script>
 
 <body>
@@ -124,7 +154,7 @@
   <button class="option-btn">Solar ⮟</button>
   <div class="sub-options-menu" id="solar-dropdown" style="display: none;">
     <button class="sub-option-btn" onclick="goToPage('solar-page', 100)">Solar Rooftop</button>
-    <button class="sub-option-btn">Solar Fencing</button>
+    <button class="sub-option-btn" onclick="goToPage('fencing-page', 100)">Solar Fencing</button>
   </div>
 </div>
     <button class="option-btn">Supply</button>
@@ -132,27 +162,64 @@
   </div>
 </div>
 <div id="solar-page" class="page">
-  <div class="navbar">
-    <div class="menu">
-      <div class="nav-item">
-        Home
-        <div class="dropdown">
-          <a href="#">PM Surya Ghar</a>
-          <a href="#">NON-DCR</a>
-        </div>
-      </div>
-      <div class="nav-item">
-        Commercial
-        <div class="dropdown">
-          <a href="#">NON-DCR</a>
-        </div>
-      </div>
-      <div class="nav-item">Engineering</div>
+  <div class="top-bar">
+    <button class="user-btn" onclick="toggleUserDetails()">👤</button>
+    <div id="user-details" class="user-details">
+      <p><strong>Name:</strong> <span id="user-name"></span></p>
+      <p><strong>Email:</strong> <span id="user-email"></span></p>
+      <p><strong>Phone:</strong> <span id="user-phone"></span></p>
+      <button class="logout-btn" onclick="logoutCustomer()">Logout</button>
     </div>
   </div>
 
-  <div class="page-title">Solar Options Page</div>
+  <h2 class="section-title">Solar Options</h2>
+
+  <div class="main-options home-options">
+    <!-- Home Category with Dropdown -->
+    <div class="option-with-sub" onclick="toggleDropdown(event, 'home-submenu')">
+      <button class="option-btn">Home ⮟</button>
+      <div class="sub-options-menu" id="home-submenu" style="display: none;">
+        <button class="sub-option-btn">PM Surya Ghar</button>
+        <button class="sub-option-btn">NON-DCR</button>
+      </div>
+    </div>
+
+    <!-- Commercial Category with Dropdown -->
+    <div class="option-with-sub" onclick="toggleDropdown(event, 'comm-submenu')">
+      <button class="option-btn">Commercial ⮟</button>
+      <div class="sub-options-menu" id="comm-submenu" style="display: none;">
+        <button class="sub-option-btn">NON-DCR</button>
+      </div>
+    </div>
+
+    <!-- Engineering (No dropdown) -->
+    <button class="option-btn">Engineering</button
+   </div>
+  </div>
+<button class="back-btn" onclick="goToPage('home-page', 100)">Back to Home</button>
 </div>
+<div id="fencing-page" class="page">
+  <div class="top-bar">
+    <button class="user-btn" onclick="toggleUserDetails()">👤</button>
+    <div id="user-details" class="user-details">
+      <p><strong>Name:</strong> <span id="user-name"></span></p>
+      <p><strong>Email:</strong> <span id="user-email"></span></p>
+      <p><strong>Phone:</strong> <span id="user-phone"></span></p>
+      <button class="logout-btn" onclick="logoutCustomer()">Logout</button>
+    </div>
+  </div>
+
+  <h2 class="section-title">Solar Fencing</h2>
+  <div class="form-group">
+    <label for="roof-perimeter">Enter Your Roof Perimeter (in meters):</label>
+    <input type="number" id="roof-perimeter" placeholder="e.g., 40" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc;">
+  </div>
+  <button class="form-btn" onclick="calculateFencing()">Submit</button>
+  <button class="back-btn" onclick="goToPage('solar-page', 100)">Back to Home</button>
+
+  <div id="fencing-result" style="margin-top: 20px; font-weight: bold;"></div>
+</div>
+
 
 <div id="service-page" class="page">
   <h2 class="section-title">Report a Service Problem</h2>
@@ -561,11 +628,16 @@ showUserDataInHomePage();
 
     // Logout function for customer
     function logoutCustomer() {
-        localStorage.removeItem('userRole'); // Clear role
-        // In a real app: localStorage.removeItem('authToken'); // Clear any authentication tokens
+    auth.signOut().then(() => {
+        localStorage.removeItem('userRole'); // Clear local role
         alert(currentLanguage === 'te' ? "మీరు విజయవంతంగా లాగౌట్ అయ్యారు." : "You have been logged out successfully.");
         window.location.href = 'index.html'; // Redirect to login page
-    }
+    }).catch((error) => {
+        console.error("Logout error:", error);
+        alert("Error logging out. Please try again.");
+    });
+}
+
 function toggleUserDetails() {
     const panel = document.getElementById("user-details");
     panel.style.display = panel.style.display === "block" ? "none" : "block";
@@ -626,6 +698,35 @@ async function submitServiceReport() {
     document.getElementById("service-description").value = "";
     document.getElementById("service-image").value = "";
     goToPage('home-page', 100);
+}
+function toggleDropdown(event, id) {
+  event.stopPropagation();
+  const menu = document.getElementById(id);
+  const allMenus = document.querySelectorAll('.sub-options-menu');
+  allMenus.forEach(m => { if (m !== menu) m.style.display = 'none'; });
+  menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+}
+
+document.addEventListener('click', () => {
+  document.querySelectorAll('.sub-options-menu').forEach(menu => {
+    menu.style.display = 'none';
+  });
+});
+function calculateFencing() {
+  const input = document.getElementById("roof-perimeter");
+  const resultBox = document.getElementById("fencing-result");
+  const perimeter = parseFloat(input.value);
+
+  if (isNaN(perimeter) || perimeter <= 0) {
+    resultBox.textContent = "Please enter a valid perimeter value.";
+    return;
+  }
+
+  // You can customize this formula
+  const costPerMeter = 350; // Example value
+  const totalCost = perimeter * costPerMeter;
+
+  resultBox.textContent = `Estimated fencing cost: ₹${totalCost.toLocaleString("en-IN")}`;
 }
 
 </script>
