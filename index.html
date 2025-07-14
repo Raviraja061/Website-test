@@ -10,7 +10,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
 
 <script>
   const firebaseConfig = {
@@ -117,67 +117,65 @@
     </div>
   </div>
 
-
   <h2 class="section-title">Welcome to CYGNII</h2>
+
   <div class="main-options home-options">
-  <div class="option-with-sub">
-  <div class="option-btn">Solar ▾</div>
-  <div class="sub-options-menu">
-    <div class="sub-option-btn" onclick="goToPage('solar-page', 100)">Solar Rooftop</div>
-    <div class="sub-option-btn" onclick="goToPage('solar-fencing', 100)">Solar Fencing</div>
+    <div class="option-with-sub" onclick="toggleSolarDropdown(event)">
+  <button class="option-btn">Solar ⮟</button>
+  <div class="sub-options-menu" id="solar-dropdown" style="display: none;">
+    <button class="sub-option-btn" onclick="goToPage('solar-page', 100)">Solar Rooftop</button>
+    <button class="sub-option-btn">Solar Fencing</button>
   </div>
 </div>
-
-  <div class="option-btn">Supply</div>
-  <div class="option-btn">Service</div>
-</div>
-
+    <button class="option-btn">Supply</button>
+    <button class="option-btn" onclick="goToPage('service-page', 100)">Service</button>
+  </div>
 </div>
 <div id="solar-page" class="page">
-  <h2 class="section-title">Solar Page</h2>
-  <div class="main-options home-options">
-
-    <!-- Home with Dropdown -->
-    <div class="option-with-sub" onmouseover="showSubOptions(this)" onmouseout="hideSubOptions(this)">
-      <div class="option-btn">Home</div>
-      <div class="sub-options-menu">
-        <div class="sub-option-btn" onclick="alert('PM Surya Ghar selected')">PM SURYA GHAR</div>
-        <div class="sub-option-btn" onclick="alert('NON-DCR selected')">NON-DCR</div>
+  <div class="navbar">
+    <div class="menu">
+      <div class="nav-item">
+        Home
+        <div class="dropdown">
+          <a href="#">PM Surya Ghar</a>
+          <a href="#">NON-DCR</a>
+        </div>
       </div>
+      <div class="nav-item">
+        Commercial
+        <div class="dropdown">
+          <a href="#">NON-DCR</a>
+        </div>
+      </div>
+      <div class="nav-item">Engineering</div>
     </div>
-
-    <!-- Other Options -->
-    <div class="option-btn" onclick="alert('Commercial Selected')">Commercial</div>
-    <div class="option-btn" onclick="alert('Engineering Selected')">Engineering</div>
-
   </div>
-<div class="nav-controls">
-  <button class="back-btn" onclick="goToPage('home-page', 100)">← Back to Home</button>
+
+  <div class="page-title">Solar Options Page</div>
 </div>
 
-</div>
-
-<div id="solar-fencing" class="page">
-  <div class="content">
-    <h2 class="section-title">Solar Fencing</h2>
-
-    <div class="form-group">
-      <label for="roofPerimeter">Enter your roof perimeter (in meters):</label>
-      <input type="number" id="roofPerimeter" placeholder="e.g., 120" min="0" />
-    </div>
-
-    <button class="btn" onclick="handleFencingInput()">Submit</button>
-    <div id="fencingMessage" class="message" style="display:none;"></div>
-
-    <button class="back-btn" onclick="goToPage('home-page', 100)">← Back to Home</button>
+<div id="service-page" class="page">
+  <h2 class="section-title">Report a Service Problem</h2>
+  <div class="form-group">
+    <label for="service-description">Describe your problem</label>
+    <textarea id="service-description" placeholder="Describe your problem..." rows="5" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc;"></textarea>
   </div>
+  <div class="form-group">
+    <label for="service-image">Upload image (optional)</label>
+    <input type="file" id="service-image" accept="image/*">
+  </div>
+  <button class="form-btn" onclick="submitServiceReport()">Submit Report</button>
+  <button class="back-btn" onclick="goToPage('home-page', 100)">Back to Home</button>
 </div>
 
-<div class="footer">
+   <div class="footer">
   <p>Email: <a href="mailto:cygniisolar@gmail.com">cygniisolar@gmail.com</a> | Phone: 8328001860</p>
   <p>© 2023 CYGNII Property Selection System | All Rights Reserved</p>
 </div>
+
+
        
+
 <script>
     // Current language
     let currentLanguage = localStorage.getItem('userLanguage') || 'en';
@@ -331,77 +329,92 @@
     function updateUIForLanguage(lang) {
     const langData = translations[lang] || translations.en;
 
-    // Only update elements that actually exist in the DOM
-    const setText = (id, value) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = value;
-    };
+    const el = (id) => document.getElementById(id);
+    const q = (selector) => document.querySelector(selector);
 
-    const setHTML = (id, html) => {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = html;
-    };
+    if (el('main-title')) el('main-title').textContent = langData.title;
+    if (el('main-subtitle')) el('main-subtitle').textContent = langData.subtitle;
+    if (el('language-title')) el('language-title').textContent = langData.languageTitle;
+    if (el('login-title')) el('login-title').textContent = langData.loginTitle;
+    if (el('register-title')) el('register-title').textContent = langData.registerTitle;
+    if (el('property-title')) el('property-title').textContent = langData.propertyTitle;
+    if (el('email-label')) el('email-label').textContent = langData.emailLabel;
+    if (el('password-label')) el('password-label').textContent = langData.passwordLabel;
+    if (el('name-label')) el('name-label').textContent = langData.nameLabel;
+    if (el('phone-label')) el('phone-label').textContent = langData.phoneLabel;
+    if (el('reg-email-label')) el('reg-email-label').textContent = langData.emailLabel;
+    if (el('reg-password-label')) el('reg-password-label').textContent = langData.passwordLabel;
+    if (el('confirm-label')) el('confirm-label').textContent = langData.confirmLabel;
+    if (el('no-account')) el('no-account').innerHTML = `${langData.noAccount} <a onclick="showRegister()">${langData.registerLink}</a>`;
+    if (el('have-account')) el('have-account').innerHTML = `${langData.haveAccount} <a onclick="showLogin()">${langData.loginLink}</a>`;
+    if (el('login-btn')) el('login-btn').textContent = langData.loginBtn;
+    if (el('register-btn')) el('register-btn').textContent = langData.registerBtn;
+    if (el('house-btn')) el('house-btn').textContent = langData.house;
+    if (el('commercial-btn')) el('commercial-btn').textContent = langData.commercial;
+    if (el('service-btn')) el('service-btn').textContent = langData.service;
+    if (el('sub-options-title')) el('sub-options-title').textContent = langData.subTitle;
+    if (el('pm-btn')) el('pm-btn').textContent = langData.pmSuryaGahr;
+    if (el('non-dcr-btn')) el('non-dcr-btn').textContent = langData.nonDcr;
+    if (el('admin-link-guest')) el('admin-link-guest').textContent = langData.adminLinkGuest;
+    if (q('.nav-controls .prev-btn')) q('.nav-controls .prev-btn').textContent = langData.backLogin;
+    if (q('#language-page .next-btn')) q('#language-page .next-btn').textContent = langData.continueBtn;
 
-    setText('main-title', langData.title);
-    setText('main-subtitle', langData.subtitle);
-    setText('language-title', langData.languageTitle);
-    setText('login-title', langData.loginTitle);
-    setText('register-title', langData.registerTitle);
-    setText('email-label', langData.emailLabel);
-    setText('password-label', langData.passwordLabel);
-    setText('name-label', langData.nameLabel);
-    setText('phone-label', langData.phoneLabel);
-    setText('reg-email-label', langData.emailLabel);
-    setText('reg-password-label', langData.passwordLabel);
-    setText('confirm-label', langData.confirmLabel);
-
-    setHTML('no-account', `${langData.noAccount} <a onclick="showRegister()">${langData.registerLink}</a>`);
-    setHTML('have-account', `${langData.haveAccount} <a onclick="showLogin()">${langData.loginLink}</a>`);
-
-    setText('login-btn', langData.loginBtn);
-    setText('register-btn', langData.registerBtn);
-    setText('admin-link-guest', langData.adminLinkGuest);
-
-    const backBtn = document.querySelector('.nav-controls .prev-btn');
-    if (backBtn) backBtn.textContent = langData.backLogin;
-
-    const nextLangBtn = document.querySelector('#language-page .next-btn');
-    if (nextLangBtn) nextLangBtn.textContent = langData.continueBtn;
+    // PM Surya Gahr page labels
+    if (el('documents-title')) el('documents-title').textContent = langData.documentsTitle;
+    if (el('documents-note')) el('documents-note').textContent = langData.documentsNote;
+    if (el('doc1')) el('doc1').textContent = langData.doc1;
+    if (el('doc2')) el('doc2').textContent = langData.doc2;
+    if (el('doc3')) el('doc3').textContent = langData.doc3;
+    if (el('doc4')) el('doc4').textContent = langData.doc4;
+    if (el('doc5')) el('doc5').textContent = langData.doc5;
+    if (el('subsidy-title')) el('subsidy-title').textContent = langData.subsidyTitle;
+    if (el('plant-capacity-header')) el('plant-capacity-header').textContent = langData.plantCapacityHeader;
+    if (el('subsidy-amount-header')) el('subsidy-amount-header').textContent = langData.subsidyAmountHeader;
+    if (el('plant-cost-title')) el('plant-cost-title').textContent = langData.plantCostTitle;
+    if (el('plant-capacity-header2')) el('plant-capacity-header2').textContent = langData.plantCapacityHeader;
+    if (el('cost-header')) el('cost-header').textContent = langData.costHeader;
+    if (el('custom-kw-label')) el('custom-kw-label').textContent = langData.customKwLabel;
+    if (el('custom-cost-label')) el('custom-cost-label').textContent = langData.customCostLabel;
 }
 
-function handleFencingInput() {
-  const value = document.getElementById("roofPerimeter").value;
-  const msg = document.getElementById("fencingMessage");
 
-  if (value && value > 0) {
-    msg.textContent = `You entered a perimeter of ${value} meters.`;
-    msg.style.display = "block";
-  } else {
-    msg.textContent = "Please enter a valid positive number.";
-    msg.style.display = "block";
-  }
+function toggleSolarDropdown(e) {
+    const dropdown = document.getElementById('solar-dropdown');
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    e.stopPropagation(); // Stop event from bubbling to body
 }
+
+document.addEventListener('click', function() {
+    // Close dropdown when clicking anywhere else
+    const dropdown = document.getElementById('solar-dropdown');
+    if (dropdown) dropdown.style.display = 'none';
+});
 
 function goToPage(pageId, progress) {
-        // Hide all pages
-        document.querySelectorAll('.page').forEach(page => {
-            page.classList.remove('active');
-        });
+    console.log("Navigating to:", pageId);
 
-        // Show the selected page
-        document.getElementById(pageId).classList.add('active');
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+    });
 
-        // Update progress bar
-        document.getElementById('progress').style.width = progress + '%';
-
-        // Scroll to top
-        window.scrollTo(0, 0);
-
-        // Specific action after navigating to property page
-        if (pageId === 'property-page' && currentUserRole === 'customer') {
-            fetchAndDisplayPlantCostsForCustomer(); // Refresh costs for customer view
-        }
+    // Show the selected page
+    const targetPage = document.getElementById(pageId);
+    if (targetPage) {
+        targetPage.classList.add('active');
+    } else {
+        console.error("Target page not found:", pageId);
     }
+
+    // Update progress bar if element exists
+    const progressBar = document.getElementById('progress');
+    if (progressBar) {
+        progressBar.style.width = progress + '%';
+    }
+
+    // Scroll to top
+    window.scrollTo(0, 0);
+}
 
     // Language selection
     function selectLanguage(lang) {
@@ -421,9 +434,11 @@ function goToPage(pageId, progress) {
         }
 
         // If on property page (e.g., direct access after login/refresh) and a customer, load costs
-        if (document.getElementById('property-page').classList.contains('active') && currentUserRole === 'customer') {
-            fetchAndDisplayPlantCostsForCustomer();
-        }
+        const propertyPage = document.getElementById('property-page');
+if (propertyPage && propertyPage.classList.contains('active') && currentUserRole === 'customer') {
+    fetchAndDisplayPlantCostsForCustomer();
+}
+
     });
 
     // Page navigation
@@ -555,15 +570,6 @@ function toggleUserDetails() {
     const panel = document.getElementById("user-details");
     panel.style.display = panel.style.display === "block" ? "none" : "block";
 }
-function showSubOptions(element) {
-  const menu = element.querySelector('.sub-options-menu');
-  if (menu) menu.style.display = 'block';
-}
-
-function hideSubOptions(element) {
-  const menu = element.querySelector('.sub-options-menu');
-  if (menu) menu.style.display = 'none';
-}
 
 function showUserDataInHomePage() {
     const uid = auth.currentUser?.uid;
@@ -580,6 +586,48 @@ function showUserDataInHomePage() {
         console.error("Error fetching user details for home page:", error);
     });
 }
+async function submitServiceReport() {
+    const description = document.getElementById("service-description").value.trim();
+    const imageFile = document.getElementById("service-image").files[0];
+
+    if (!description) {
+        alert("Please describe the problem.");
+        return;
+    }
+
+    const user = firebase.auth().currentUser;
+    if (!user) {
+        alert("User not logged in.");
+        return;
+    }
+
+    const doc = await db.collection("users").doc(user.uid).get();
+    const userInfo = doc.data();
+
+    let imageUrl = "";
+
+    if (imageFile) {
+        const storageRef = firebase.storage().ref(`service_images/${user.uid}_${Date.now()}`);
+        await storageRef.put(imageFile);
+        imageUrl = await storageRef.getDownloadURL();
+    }
+
+    await db.collection("serviceReports").add({
+        uid: user.uid,
+        name: userInfo.name || "",
+        email: userInfo.email || "",
+        phone: userInfo.phone || "",
+        description,
+        imageUrl,
+        timestamp: new Date()
+    });
+
+    alert("Service report submitted successfully.");
+    document.getElementById("service-description").value = "";
+    document.getElementById("service-image").value = "";
+    goToPage('home-page', 100);
+}
+
 </script>
 
 
