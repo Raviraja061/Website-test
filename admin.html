@@ -80,7 +80,8 @@
         </table>
     </div>
 
-    <a href="index.html" class="admin-logout-btn" onclick="logoutAdmin()">Logout</a>
+<a href="#" class="admin-logout-btn" onclick="logoutAdmin(event)">Logout</a>
+
 </div>
 
 <script>
@@ -252,12 +253,19 @@
 }
 
 
-    function logoutAdmin() {
-        localStorage.removeItem('userRole'); // Clear role on logout
-        // In a real app: clear token from localStorage too
-        // localStorage.removeItem('authToken');
+    function logoutAdmin(event) {
+    event.preventDefault(); // Prevent <a href="index.html"> from triggering before logout completes
+
+    firebase.auth().signOut().then(() => {
+        localStorage.removeItem('userRole');
         alert('You have been logged out successfully from Admin Portal.');
-    }
+        window.location.href = 'index.html'; // Redirect only after logout
+    }).catch((error) => {
+        console.error("Logout error:", error);
+        alert("Failed to logout.");
+    });
+}
+
 
 async function loadServiceReports() {
     const tbody = document.getElementById("service-report-tbody");
