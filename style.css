@@ -40,42 +40,35 @@
 
 .option-with-sub {
   position: relative;
+  display: inline-block;
 }
 
 .sub-options-menu {
   display: none;
   position: absolute;
-  top: 100%;
-  left: 0;
-  background: #ffffff;
-  border: 1px solid #ddd;
+  background-color: #fff;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+  z-index: 1;
   border-radius: 10px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-  min-width: 180px;
-  z-index: 10;
-  padding: 5px 0;
+  overflow: hidden;
 }
-
-
 
 .sub-option-btn {
   padding: 12px 16px;
-  font-size: 0.95rem;
+  display: block;
+  text-align: left;
+  width: 100%;
+  background-color: transparent;
+  border: none;
   cursor: pointer;
-  color: #2c3e50;
-  background-color: #fdfdfd;
-  transition: background 0.25s ease, color 0.25s ease;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.sub-option-btn:last-child {
-  border-bottom: none;
+  font-size: 14px;
 }
 
 .sub-option-btn:hover {
-  background-color: #eaf4ff;
-  color: #007acc;
+  background-color: #f0f0f0;
 }
+
 
 
 .home-options {
@@ -474,13 +467,6 @@ body {
 .admin-link a:hover {
     background: rgba(52, 152, 219, 0.1);
     text-decoration: underline;
-}
-
-/* Footer */
-.page {
-  flex: 1; /* Fills remaining space */
-  padding: 30px;
-  display: none;
 }
 
 .logout-btn {
