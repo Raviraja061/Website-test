@@ -29,14 +29,13 @@
   const db = firebase.firestore();
 firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
-        // Get user role from Firestore
+        // ... existing logic for logged-in users ...
         const doc = await db.collection("users").doc(user.uid).get();
         const userData = doc.data();
         localStorage.setItem('userRole', userData.role);
         currentUserRole = userData.role;
 
         if (window.location.pathname.includes("admin.html")) {
-            // Already on admin page
             return;
         }
 
@@ -47,19 +46,23 @@ firebase.auth().onAuthStateChanged(async (user) => {
             showUserDataInHomePage();
         }
     } else {
-        // No user is logged in, redirect to login if not already there
-        const loginPage = document.getElementById('auth-page');
-        if (loginPage) {
-            goToPage('auth-page', 33.33);
-        } else {
+        // No user is logged in, but we check if the user is already on the auth page.
+        // We only redirect to index.html if the current page is not already the auth page.
+        const authPage = document.getElementById('auth-page');
+        if (!authPage) {
             window.location.href = "index.html";
         }
     }
 });
-
 </script>
 
 <body>
+<div id="splash-screen">
+        <video id="splash-video" muted autoplay playsinline>
+            <source src="cygnii vid.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+</div>
 <div class="container">
     <div class="header">
         <img src="CYGNII_Website.jpg" alt="CYGNII Logo">
@@ -126,13 +129,6 @@ firebase.auth().onAuthStateChanged(async (user) => {
             <div class="switch-auth">
                 <p id="have-account">Already have an account? <a onclick="showLogin()" id="login-link">Login here</a></p>
             </div>
-        </div>
-
-        <div class="nav-controls">
-            <button class="prev-btn" onclick="goToPage('language-page', 0)">Back</button>
-        </div>
-        <div class="admin-link">
-            <a href="#" onclick="showAdminPrompt()" id="admin-link-guest">Guest Admin Access (for testing)</a>
         </div>
     </div>
 
@@ -241,9 +237,64 @@ firebase.auth().onAuthStateChanged(async (user) => {
 </div>
 
 
-       
-
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if the video splash screen should be shown
+    const splashScreen = document.getElementById('splash-screen');
+    const splashVideo = document.getElementById('splash-video');
+    const hasPlayedVideo = localStorage.getItem('splashVideoPlayed') === 'true';
+
+    // Check if the user was on a specific page
+    const lastPageId = localStorage.getItem('lastPage');
+
+    // Handle the video and initial page display
+    if (hasPlayedVideo) {
+        // If video has already played, hide the splash screen immediately
+        splashScreen.style.display = 'none';
+
+        // Check if the user was logged in and on a specific page
+        if (lastPageId && lastPageId !== 'language-page' && lastPageId !== 'auth-page') {
+            // If they were on a content page, go back there
+            goToPage(lastPageId, 100);
+        } else {
+            // Otherwise, show the default page after login (home)
+            goToPage('language-page', 0);
+        }
+    } else {
+        // Video has not played yet, so show it and set the flag
+        splashVideo.addEventListener('ended', () => {
+            splashScreen.style.opacity = '0';
+            setTimeout(() => {
+                splashScreen.style.display = 'none';
+            }, 2000); // Must match CSS transition duration
+        });
+        localStorage.setItem('splashVideoPlayed', 'true');
+    }
+
+    // Update UI for language
+    updateUIForLanguage(currentLanguage);
+
+    // If already logged in and on the admin page, redirect
+    if (currentUserRole === 'admin' && window.location.pathname.includes("admin.html")) {
+        return;
+    }
+
+    // Check if user is logged in
+    firebase.auth().onAuthStateChanged(async (user) => {
+        if (user) {
+            // User is logged in, but we've already handled the page redirection
+            // The logic inside this block should be minimal to avoid conflicts
+            // For example, show user data on the home page
+            if (document.getElementById('home-page').classList.contains('active')) {
+                showUserDataInHomePage();
+            }
+        } else {
+            // No user is logged in, so clear the last page and redirect to the language page
+            localStorage.removeItem('lastPage');
+        }
+    });
+});
+
     // Current language
     let currentLanguage = localStorage.getItem('userLanguage') || 'en';
     let currentUserRole = localStorage.getItem('userRole') || null;
@@ -460,6 +511,9 @@ document.addEventListener('click', function() {
 function goToPage(pageId, progress) {
     console.log("Navigating to:", pageId);
 
+    // Save the current page ID to local storage
+    localStorage.setItem('lastPage', pageId);
+
     // Hide all pages
     document.querySelectorAll('.page').forEach(page => {
         page.classList.remove('active');
@@ -473,13 +527,12 @@ function goToPage(pageId, progress) {
         console.error("Target page not found:", pageId);
     }
 
-    // Update progress bar if element exists
+    // Update progress bar
     const progressBar = document.getElementById('progress');
     if (progressBar) {
         progressBar.style.width = progress + '%';
     }
 
-    // Scroll to top
     window.scrollTo(0, 0);
 }
 
@@ -626,12 +679,13 @@ showUserDataInHomePage();
         }
     }
 
-    // Logout function for customer
-    function logoutCustomer() {
+function logoutCustomer() {
     auth.signOut().then(() => {
-        localStorage.removeItem('userRole'); // Clear local role
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('splashVideoPlayed');
+        localStorage.removeItem('lastPage'); // Add this line
         alert(currentLanguage === 'te' ? "మీరు విజయవంతంగా లాగౌట్ అయ్యారు." : "You have been logged out successfully.");
-        window.location.href = 'index.html'; // Redirect to login page
+        window.location.href = 'index.html';
     }).catch((error) => {
         console.error("Logout error:", error);
         alert("Error logging out. Please try again.");
