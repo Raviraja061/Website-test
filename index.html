@@ -238,215 +238,175 @@ firebase.auth().onAuthStateChanged(async (user) => {
 
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    // Check if the video splash screen should be shown
-    const splashScreen = document.getElementById('splash-screen');
-    const splashVideo = document.getElementById('splash-video');
-    const hasPlayedVideo = localStorage.getItem('splashVideoPlayed') === 'true';
 
-    // Check if the user was on a specific page
-    const lastPageId = localStorage.getItem('lastPage');
+const splashVideo = document.getElementById('splash-video');
+const splashScreen = document.getElementById('splash-screen');
+const hasPlayedVideo = sessionStorage.getItem('splashVideoPlayed');
+const lastPageId = sessionStorage.getItem('lastPageId'); // keep last visited page if you use it
 
-    // Handle the video and initial page display
-    if (hasPlayedVideo) {
-        // If video has already played, hide the splash screen immediately
+// Allow user to skip video on click
+splashVideo.addEventListener('click', () => {
+    splashVideo.pause();
+    splashScreen.style.opacity = '0';
+    setTimeout(() => {
         splashScreen.style.display = 'none';
-
-        // Check if the user was logged in and on a specific page
-        if (lastPageId && lastPageId !== 'language-page' && lastPageId !== 'auth-page') {
-            // If they were on a content page, go back there
-            goToPage(lastPageId, 100);
-        } else {
-            // Otherwise, show the default page after login (home)
-            goToPage('language-page', 0);
-        }
-    } else {
-        // Video has not played yet, so show it and set the flag
-        splashVideo.addEventListener('ended', () => {
-            splashScreen.style.opacity = '0';
-            setTimeout(() => {
-                splashScreen.style.display = 'none';
-            }, 2000); // Must match CSS transition duration
-        });
-        localStorage.setItem('splashVideoPlayed', 'true');
-    }
-
-    // Update UI for language
-    updateUIForLanguage(currentLanguage);
-
-    // If already logged in and on the admin page, redirect
-    if (currentUserRole === 'admin' && window.location.pathname.includes("admin.html")) {
-        return;
-    }
-
-    // Check if user is logged in
-    firebase.auth().onAuthStateChanged(async (user) => {
-        if (user) {
-            // User is logged in, but we've already handled the page redirection
-            // The logic inside this block should be minimal to avoid conflicts
-            // For example, show user data on the home page
-            if (document.getElementById('home-page').classList.contains('active')) {
-                showUserDataInHomePage();
-            }
-        } else {
-            // No user is logged in, so clear the last page and redirect to the language page
-            localStorage.removeItem('lastPage');
-        }
-    });
+        goToPage('language-page', 0); // Go to language page after skip
+    }, 2000);
+    sessionStorage.setItem('splashVideoPlayed', 'true');
 });
 
-    // Current language
-    let currentLanguage = localStorage.getItem('userLanguage') || 'en';
-    let currentUserRole = localStorage.getItem('userRole') || null;
-
-    // Mock backend data (in a real app, this would come from API calls)
-    // This is stored here so the customer side can access it without a separate backend
-    // In a real app, customer would fetch this from the backend
-    let mockPlantCosts = JSON.parse(localStorage.getItem('plantCosts')) || [
-        { id: 1, capacity: 1, cost: 91000 },
-        { id: 2, capacity: 2, cost: 161000 },
-        { id: 3, capacity: 3, cost: 220000 },
-        { id: 4, capacity: 4, cost: 290000 }, // Example for custom 4kW
-        { id: 5, capacity: 5, cost: 350000 }  // Example for custom 5kW
-    ];
-
-    // Ensure mockPlantCosts is saved to localStorage so admin changes persist
-    function saveMockPlantCosts() {
-        localStorage.setItem('plantCosts', JSON.stringify(mockPlantCosts));
+if (hasPlayedVideo) {
+    // Already played in this session — skip to last or language page
+    splashScreen.style.display = 'none';
+    if (lastPageId && lastPageId !== 'language-page' && lastPageId !== 'auth-page') {
+        goToPage(lastPageId, 100);
+    } else {
+        goToPage('language-page', 0);
     }
-    // Save initial state if not already present
-    if (!localStorage.getItem('plantCosts')) {
-        saveMockPlantCosts();
+} else {
+    // Play video once per session
+    splashVideo.addEventListener('ended', () => {
+        splashScreen.style.opacity = '0';
+        setTimeout(() => {
+            splashScreen.style.display = 'none';
+            goToPage('language-page', 0); // Go to language page after video ends
+        }, 2000);
+    });
+
+    // Mark as played for this session
+    sessionStorage.setItem('splashVideoPlayed', 'true');
+}
+
+
+// --- Translations object ---
+const translations = {
+    en: {
+        title: "Property Selection System",
+        subtitle: "Step-by-step process",
+        languageTitle: "Select Language",
+        loginTitle: "Login to Your Account",
+        registerTitle: "Create Account",
+        propertyTitle: "Select Property Type",
+        emailLabel: "Email Address",
+        passwordLabel: "Password",
+        nameLabel: "Full Name",
+        phoneLabel: "Phone Number",
+        confirmLabel: "Confirm Password",
+        noAccount: "Don't have an account?",
+        haveAccount: "Already have an account?",
+        registerLink: "Register here",
+        loginLink: "Login here",
+        loginBtn: "Login",
+        registerBtn: "Register",
+        house: "House",
+        commercial: "Commercial",
+        service: "Service",
+        subTitle: "Select House Type:",
+        pmSuryaGahr: "PM Surya Gahr",
+        nonDcr: "Non DCR",
+        adminLinkGuest: "Guest Admin Access (for testing)",
+        backLogin: "Back to Login",
+        continueBtn: "Continue",
+        logoutBtn: "Logout",
+        houseSelected: "You selected: House",
+        commercialSelected: "You selected: Commercial",
+        serviceSelected: "You selected: Service",
+        pmSuryaGahrSelected: "You selected: House → PM Surya Gahr",
+        nonDcrSelected: "You selected: House → Non DCR",
+        documentsTitle: "Documents Required",
+        documentsNote: "All documents should belong to the same person whose name is on the current bill",
+        doc1: "Aadhar Card",
+        doc2: "PAN Card",
+        doc3: "Bank Pass Book",
+        doc4: "4 Months Current Bill",
+        doc5: "Aadhar Linked Mobile Number",
+        subsidyTitle: "Subsidy",
+        plantCostTitle: "Plant Cost",
+        plantCapacityHeader: "Plant Capacity",
+        subsidyAmountHeader: "Subsidy Amount",
+        costHeader: "Cost",
+        customKwLabel: "Custom Plant Size (4-9 kW):",
+        customCostLabel: "Custom Cost:",
+        enterEmailPass: "Please enter email and password",
+        passwordsMismatch: "Passwords do not match",
+        fillAllFields: "Please fill all fields",
+        registrationSuccess: "Registration successful! Logging in...",
+        loginFailed: "Login failed. Please check your credentials.",
+        invalidEmailPass: "Invalid email or password",
+        loginError: "An error occurred during login.",
+        registrationError: "An error occurred during registration.",
+        adminAccessGranted: "Access granted! Redirecting to admin page...",
+        invalidAccessCode: "Invalid access code",
+        errorFetchingCosts: "Error fetching plant costs."
+    },
+    te: {
+        title: "ఆస్తి ఎంపిక వ్యవస్థ",
+        subtitle: "దశల వారీ ప్రక్రియ",
+        languageTitle: "భాషను ఎంచుకోండి",
+        loginTitle: "మీ ఖాతాలోకి లాగిన్ అవ్వండి",
+        registerTitle: "ఖాతా సృష్టించండి",
+        propertyTitle: "ఆస్తి రకాన్ని ఎంచుకోండి",
+        emailLabel: "ఇమెయిల్ చిరునామా",
+        passwordLabel: "పాస్వర్డ్",
+        nameLabel: "పూర్తి పేరు",
+        phoneLabel: "ఫోన్ నంబర్",
+        confirmLabel: "పాస్‌వర్డ్‌ని నిర్ధారించండి",
+        noAccount: "ఖాతా లేదా?",
+        haveAccount: "ఇప్పటికే ఖాతా ఉందా?",
+        registerLink: "ఇక్కడ నమోదు చేసుకోండి",
+        loginLink: "ఇక్కడ లాగిన్ అవ్వండి",
+        loginBtn: "లాగిన్",
+        registerBtn: "నమోదు చేసుకోండి",
+        house: "హౌస్",
+        commercial: "కామర్షియల్",
+        service: "సేవ",
+        subTitle: "హౌస్ రకాన్ని ఎంచుకోండి:",
+        pmSuryaGahr: "పిఎం సూర్య గృహం",
+        nonDcr: "నాన్ డిసిఆర్",
+        adminLinkGuest: "అతిథి అడ్మిన్ యాక్సెస్ (పరీక్ష కోసం)",
+        backLogin: "లాగిన్‌కు తిరిగి వెళ్ళండి",
+        continueBtn: "కొనసాగించు",
+        logoutBtn: "లాగౌట్",
+        houseSelected: "మీరు ఎంచుకున్నారు: హౌస్",
+        commercialSelected: "మీరు ఎంచుకున్నారు: కామర్షియల్",
+        serviceSelected: "మీరు ఎంచుకున్నారు: సేవ",
+        pmSuryaGahrSelected: "మీరు ఎంచుకున్నారు: హౌస్ → పిఎం సూర్య గృహం",
+        nonDcrSelected: "మీరు ఎంచుకున్నారు: హౌస్ → నాన్ డిసిఆర్",
+        documentsTitle: "అవసరమైన డాక్యుమెంట్స్",
+        documentsNote: "ఈ డాక్యుమెంట్స్ అన్నీ ప్రస్తుత బిల్లులో పేరు ఉన్న వ్యక్తికి చెందినవి",
+        doc1: "ఆధార్ కార్డు",
+        doc2: "పాన్ కార్డు",
+        doc3: "బ్యాంక్ పాస్ బుక్",
+        doc4: "4 నెలల ప్రస్తుత బిల్లు",
+        doc5: "ఆధార్ లింక్ మొబైల్ నంబర్",
+        subsidyTitle: "సబ్సిడీ",
+        plantCostTitle: "ప్లాంట్ ఖర్చు",
+        plantCapacityHeader: "ప్లాంట్ సామర్థ్యం",
+        subsidyAmountHeader: "సబ్సిడీ మొత్తం",
+        costHeader: "ఖర్చు",
+        customKwLabel: "కస్టమ్ ప్లాంట్ సైజు (4-9 kW):",
+        customCostLabel: "కస్టమ్ ఖర్చు:",
+        enterEmailPass: "దయచేసి ఇమెయిల్ మరియు పాస్వర్డ్ నమోదు చేయండి",
+        passwordsMismatch: "పాస్‌వర్డ్‌లు సరిపోలలేదు",
+        fillAllFields: "దయచేసి అన్ని ఫీల్డ్‌లను పూరించండి",
+        registrationSuccess: "నమోదు విజయవంతమైంది! లాగిన్ అవుతోంది...",
+        loginFailed: "లాగిన్ విఫలమైంది. దయచేసి మీ ఆధారాలను తనిఖీ చేయండి.",
+        invalidEmailPass: "చెల్లని ఇమెయిల్ లేదా పాస్‌వర్డ్",
+        loginError: "లాగిన్‌లో లోపం ఏర్పడింది.",
+        registrationError: "నమోదులో లోపం ఏర్పడింది.",
+        adminAccessGranted: "ప్రవేశం అనుమతించబడింది! అడ్మిన్ పేజీకి మళ్లించబడుతోంది...",
+        invalidAccessCode: "చెల్లని యాక్సెస్ కోడ్",
+        errorFetchingCosts: "ప్లాంట్ ధరలను పొందడంలో లోపం ఏర్పడింది."
     }
+};
 
-    // --- Translations object ---
-    const translations = {
-        en: {
-            title: "Property Selection System",
-            subtitle: "Step-by-step process",
-            languageTitle: "Select Language",
-            loginTitle: "Login to Your Account",
-            registerTitle: "Create Account",
-            propertyTitle: "Select Property Type",
-            emailLabel: "Email Address",
-            passwordLabel: "Password",
-            nameLabel: "Full Name",
-            phoneLabel: "Phone Number",
-            confirmLabel: "Confirm Password",
-            noAccount: "Don't have an account?",
-            haveAccount: "Already have an account?",
-            registerLink: "Register here",
-            loginLink: "Login here",
-            loginBtn: "Login",
-            registerBtn: "Register",
-            house: "House",
-            commercial: "Commercial",
-            service: "Service",
-            subTitle: "Select House Type:",
-            pmSuryaGahr: "PM Surya Gahr",
-            nonDcr: "Non DCR",
-            adminLinkGuest: "Guest Admin Access (for testing)",
-            backLogin: "Back to Login",
-            continueBtn: "Continue",
-            logoutBtn: "Logout",
-            houseSelected: "You selected: House",
-            commercialSelected: "You selected: Commercial",
-            serviceSelected: "You selected: Service",
-            pmSuryaGahrSelected: "You selected: House → PM Surya Gahr",
-            nonDcrSelected: "You selected: House → Non DCR",
-            documentsTitle: "Documents Required",
-            documentsNote: "All documents should belong to the same person whose name is on the current bill",
-            doc1: "Aadhar Card",
-            doc2: "PAN Card",
-            doc3: "Bank Pass Book",
-            doc4: "4 Months Current Bill",
-            doc5: "Aadhar Linked Mobile Number",
-            subsidyTitle: "Subsidy",
-            plantCostTitle: "Plant Cost",
-            plantCapacityHeader: "Plant Capacity",
-            subsidyAmountHeader: "Subsidy Amount",
-            costHeader: "Cost",
-            customKwLabel: "Custom Plant Size (4-9 kW):",
-            customCostLabel: "Custom Cost:",
-            // Messages
-            enterEmailPass: "Please enter email and password",
-            passwordsMismatch: "Passwords do not match",
-            fillAllFields: "Please fill all fields",
-            registrationSuccess: "Registration successful! Logging in...",
-            loginFailed: "Login failed. Please check your credentials.",
-            invalidEmailPass: "Invalid email or password",
-            loginError: "An error occurred during login.",
-            registrationError: "An error occurred during registration.",
-            adminAccessGranted: "Access granted! Redirecting to admin page...",
-            invalidAccessCode: "Invalid access code",
-            errorFetchingCosts: "Error fetching plant costs."
-        },
-        te: {
-            title: "ఆస్తి ఎంపిక వ్యవస్థ",
-            subtitle: "దశల వారీ ప్రక్రియ",
-            languageTitle: "భాషను ఎంచుకోండి",
-            loginTitle: "మీ ఖాతాలోకి లాగిన్ అవ్వండి",
-            registerTitle: "ఖాతా సృష్టించండి",
-            propertyTitle: "ఆస్తి రకాన్ని ఎంచుకోండి",
-            emailLabel: "ఇమెయిల్ చిరునామా",
-            passwordLabel: "పాస్వర్డ్",
-            nameLabel: "పూర్తి పేరు",
-            phoneLabel: "ఫోన్ నంబర్",
-            confirmLabel: "పాస్‌వర్డ్‌ని నిర్ధారించండి",
-            noAccount: "ఖాతా లేదా?",
-            haveAccount: "ఇప్పటికే ఖాతా ఉందా?",
-            registerLink: "ఇక్కడ నమోదు చేసుకోండి",
-            loginLink: "ఇక్కడ లాగిన్ అవ్వండి",
-            loginBtn: "లాగిన్",
-            registerBtn: "నమోదు చేసుకోండి",
-            house: "హౌస్",
-            commercial: "కామర్షియల్",
-            service: "సేవ",
-            subTitle: "హౌస్ రకాన్ని ఎంచుకోండి:",
-            pmSuryaGahr: "పిఎం సూర్య గృహం",
-            nonDcr: "నాన్ డిసిఆర్",
-            adminLinkGuest: "అతిథి అడ్మిన్ యాక్సెస్ (పరీక్ష కోసం)",
-            backLogin: "లాగిన్‌కు తిరిగి వెళ్ళండి",
-            continueBtn: "కొనసాగించు",
-            logoutBtn: "లాగౌట్",
-            houseSelected: "మీరు ఎంచుకున్నారు: హౌస్",
-            commercialSelected: "మీరు ఎంచుకున్నారు: కామర్షియల్",
-            serviceSelected: "మీరు ఎంచుకున్నారు: సేవ",
-            pmSuryaGahrSelected: "మీరు ఎంచుకున్నారు: హౌస్ → పిఎం సూర్య గృహం",
-            nonDcrSelected: "మీరు ఎంచుకున్నారు: హౌస్ → నాన్ డిసిఆర్",
-            documentsTitle: "అవసరమైన డాక్యుమెంట్స్",
-            documentsNote: "ఈ డాక్యుమెంట్స్ అన్నీ ప్రస్తుత బిల్లులో పేరు ఉన్న వ్యక్తికి చెందినవి",
-            doc1: "ఆధార్ కార్డు",
-            doc2: "పాన్ కార్డు",
-            doc3: "బ్యాంక్ పాస్ బుక్",
-            doc4: "4 నెలల ప్రస్తుత బిల్లు",
-            doc5: "ఆధార్ లింక్ మొబైల్ నంబర్",
-            subsidyTitle: "సబ్సిడీ",
-            plantCostTitle: "ప్లాంట్ ఖర్చు",
-            plantCapacityHeader: "ప్లాంట్ సామర్థ్యం",
-            subsidyAmountHeader: "సబ్సిడీ మొత్తం",
-            costHeader: "ఖర్చు",
-            customKwLabel: "కస్టమ్ ప్లాంట్ సైజు (4-9 kW):",
-            customCostLabel: "కస్టమ్ ఖర్చు:",
-            // Messages
-            enterEmailPass: "దయచేసి ఇమెయిల్ మరియు పాస్వర్డ్ నమోదు చేయండి",
-            passwordsMismatch: "పాస్‌వర్డ్‌లు సరిపోలలేదు",
-            fillAllFields: "దయచేసి అన్ని ఫీల్డ్‌లను పూరించండి",
-            registrationSuccess: "నమోదు విజయవంతమైంది! లాగిన్ అవుతోంది...",
-            loginFailed: "లాగిన్ విఫలమైంది. దయచేసి మీ ఆధారాలను తనిఖీ చేయండి.",
-            invalidEmailPass: "చెల్లని ఇమెయిల్ లేదా పాస్‌వర్డ్",
-            loginError: "లాగిన్‌లో లోపం ఏర్పడింది.",
-            registrationError: "నమోదులో లోపం ఏర్పడింది.",
-            adminAccessGranted: "ప్రవేశం అనుమతించబడింది! అడ్మిన్ పేజీకి మళ్లించబడుతోంది...",
-            invalidAccessCode: "చెల్లని యాక్సెస్ కోడ్",
-            errorFetchingCosts: "ప్లాంట్ ధరలను పొందడంలో లోపం ఏర్పడింది."
-        }
-    };
+// --- Global Variables ---
+let currentLanguage = localStorage.getItem('userLanguage') || 'en';
+let currentUserRole = localStorage.getItem('userRole') || null;
 
-    // Update UI based on selected language
-    function updateUIForLanguage(lang) {
+// --- Function to update UI ---
+function updateUIForLanguage(lang) {
     const langData = translations[lang] || translations.en;
-
     const el = (id) => document.getElementById(id);
     const q = (selector) => document.querySelector(selector);
 
@@ -494,6 +454,46 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el('custom-kw-label')) el('custom-kw-label').textContent = langData.customKwLabel;
     if (el('custom-cost-label')) el('custom-cost-label').textContent = langData.customCostLabel;
 }
+
+// Update UI immediately
+updateUIForLanguage(currentLanguage);
+
+// --- Auth role check ---
+if (currentUserRole === 'admin' && window.location.pathname.includes("admin.html")) {
+    // Redirect logic here if needed
+}
+
+// --- Firebase auth check ---
+firebase.auth().onAuthStateChanged(async (user) => {
+    if (user) {
+        if (document.getElementById('home-page').classList.contains('active')) {
+            showUserDataInHomePage();
+        }
+    } else {
+        localStorage.removeItem('lastPage');
+    }
+});
+
+// --- Mock backend data ---
+let mockPlantCosts = JSON.parse(localStorage.getItem('plantCosts')) || [
+    { id: 1, capacity: 1, cost: 91000 },
+    { id: 2, capacity: 2, cost: 161000 },
+    { id: 3, capacity: 3, cost: 220000 },
+    { id: 4, capacity: 4, cost: 290000 },
+    { id: 5, capacity: 5, cost: 350000 }
+];
+
+function saveMockPlantCosts() {
+    localStorage.setItem('plantCosts', JSON.stringify(mockPlantCosts));
+}
+
+if (!localStorage.getItem('plantCosts')) {
+    saveMockPlantCosts();
+}
+
+
+  
+
 
 
 function toggleSolarDropdown(e) {
